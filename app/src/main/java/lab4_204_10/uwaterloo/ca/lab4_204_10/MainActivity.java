@@ -55,13 +55,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         LinearLayout layout = ((LinearLayout)findViewById(R.id.layout));
 
-        //Hacky Android Permission fix
-//        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-//            //ask for permission
-//            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2909);
-//        }
-        //  End hacky Android Permission fix
+        // Hacky Android Permission fix
+        /*if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            //ask for permission
+            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2909);
+        }*/
 
+
+        // load map view
         mv = new  MapView(getApplicationContext(), 1200, 800, 65, 65);
         registerForContextMenu(mv);
         String downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         // local field for update
         float result;
 
+        // matching angle to store the result
         if (heading >= 0 && angle >= 0) {
             result = heading - angle;
         } else if (heading >= 0 && angle < 0) {

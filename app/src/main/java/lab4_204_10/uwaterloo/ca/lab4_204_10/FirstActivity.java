@@ -30,6 +30,7 @@ public class FirstActivity extends AppCompatActivity {
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get the control for user input
                 EditText view = (EditText) findViewById(R.id.box);
                 Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
