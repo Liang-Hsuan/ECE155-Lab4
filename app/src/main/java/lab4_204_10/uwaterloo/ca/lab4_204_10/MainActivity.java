@@ -1,9 +1,11 @@
 package lab4_204_10.uwaterloo.ca.lab4_204_10;
 
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.*;
 import android.hardware.*;
 import android.os.*;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.*;
 import android.view.*;
 import android.view.animation.RotateAnimation;
@@ -61,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 2909);
         }*/
 
+        // local variables to determine the map scale
+        float[] scale = Data.map.equals("E2-3344.svg") ? new float[] { 45, 35 } : new float[] { 70, 65 };
 
         // load map view
-        mv = new  MapView(getApplicationContext(), 1200, 800, 65, 65);
+        mv = new  MapView(getApplicationContext(), 1200, 800, scale[0], scale[1]);
         registerForContextMenu(mv);
         String downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
         File dir = new File(downloadDir);
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* a method that calculate the direction from the current point to destination */
     protected static void calculateDirection(float heading, PointF currentPoint, PointF endPoint) {
+        // region Displaying Direction to The Destination
         // get the angle to the destination
         float angle = (float) Math.atan((endPoint.y - currentPoint.y)/(endPoint.x - currentPoint.x));
 
@@ -227,6 +232,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             result = Math.abs(angle) - Math.abs(heading);
         }
+        // endregion
+
+        // region Displaying North
+        // float result = -1*heading;
+        // endregion
 
         // set rotate animation
         final RotateAnimation rotateAnim = new RotateAnimation((float)Math.toDegrees(currentDegree), (float)Math.toDegrees(result),
@@ -325,14 +335,15 @@ public class MainActivity extends AppCompatActivity {
                         case STAGE_THREE_QUARTERS:
                             if (z >= 0.05 && z < 0.08) {
                                 PointF p = mv.getUserPoint();
-                                PointF newP = new PointF((float)(p.x + Math.cos(result[0]) * Data.distance), (float)(p.y + Math.sin(result[0]) * Data.distance));
+                                PointF newP = new PointF(p.x + (float)Math.sin(result[0]) * Data.distance, p.y - (float)Math.cos(result[0]) * Data.distance);
                                 List<InterceptPoint> list = map.calculateIntersections(p, newP);
                                 if (list.size() < 1) {
                                     steps++;
                                     mv.setUserPoint(newP);
+                                    calculatePath(newP, mv.getDestinationPoint());
                                     if (Math.abs(mv.getDestinationPoint().y - newP.y) < Data.distance && Math.abs(mv.getDestinationPoint().x - newP.x) < Data.distance)
                                         if (mv.getUserPoint().x > 0 && mv.getUserPoint().y > 0 && mv.getDestinationPoint().x > 0 && mv.getDestinationPoint().y > 0)
-                                            showDialog("Congratulation", "You reach destination point !!!");
+                                            showDialog("Congratulations", "You reached your destination!");
                                 }
                                 stage = STAGE_IDLE;
                             } else if (z < 0.037) {
